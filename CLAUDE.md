@@ -15,8 +15,8 @@ Shadowdark Toolkit: a personal fork of p-mercury/obsidian-shadow-dark (Apache-2.
 ## Repo workflow
 
 - `origin` = `Mattrogers13/obsidian-plugin-shadowdark-toolkit-fork`, `upstream` = `p-mercury/obsidian-shadow-dark`. Never open PRs upstream; `gh` default repo is set to the fork.
-- Flow: feature branch, then PR to the fork's `main`, merge, and tag `vX.Y.Z-alpha`. Tag pushes trigger `.github/workflows/release.yaml` (draft release). Actions have not run on the fork so far.
-- `manifest.json`/`versions.json` still say upstream's `1.2.0`; release tags (`v0.x`) are not synced to them yet.
+- Flow: feature branch, then PR to the fork's `main`, then merge.
+- Releases: bump with `npm version X.Y.Z-alpha --no-git-tag-version` (updates `package.json`, `manifest.json`, `versions.json`), merge, then push a tag that is exactly the manifest version, **no `v` prefix**; Obsidian and BRAT require the tag, release name and manifest version to match. The tag push runs `.github/workflows/release.yaml`, which fails on a tag/manifest mismatch and publishes a release (pre-release when the version has a hyphen) with `main.js`, `manifest.json`, `styles.css`. Older `v0.x-alpha` tags predate this.
 - `sources/` holds the original handoff notes and patches and is excluded via `.git/info/exclude`.
 
 ## Architecture
