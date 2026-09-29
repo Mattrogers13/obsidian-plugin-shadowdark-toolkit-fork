@@ -32,15 +32,15 @@ export class Class {
 
 	marshal() {
 		return [
-			"```shadowdark-class",
+			"```sd-class",
 			JSON.stringify(this.snapshot, null, 2),
 			"```",
-			`^shadowdark-class-${this.id}`,
+			`^sd-class-${this.id}`,
 		].join("\n");
 	}
 
 	static unmarshal(content: string) {
-		const blockMatch = content.match(/```shadowdark-item\s*([\s\S]*?)```/);
+		const blockMatch = content.match(/```sd-item\s*([\s\S]*?)```/);
 		const json = blockMatch?.[1]?.trim() ?? content.trim();
 		try {
 			return new Class(JSON5.parse(json) as ClassData);

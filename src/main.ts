@@ -137,7 +137,7 @@ export default class Shadowdark extends Plugin {
 			const section = ctx.getSectionInfo(el);
 			if (!section) return;
 
-			const marker = "^shadowdark-item-set";
+			const marker = "^sd-item-set";
 
 			if (!section.text.split(/\r?\n/).some((line) => line.trim() === marker)) {
 				return;
@@ -150,42 +150,42 @@ export default class Shadowdark extends Plugin {
 		});
 
 		this.registerMarkdownCodeBlockProcessor(
-			"shadowdark-encounter-table",
+			"sd-encounter-table",
 			(source, el, ctx) => {
 				renderEncoutnerTableBlock(this, source, el, ctx);
 			},
 		);
 
 		this.registerMarkdownCodeBlockProcessor(
-			"shadowdark-npc",
+			"sd-npc",
 			(source, el, ctx) => {
 				renderNpcBlock(this, source, el, ctx);
 			},
 		);
 
 		this.registerMarkdownCodeBlockProcessor(
-			"shadowdark-class",
+			"sd-class",
 			(source, el, ctx) => {
 				renderClassBlock(this, source, el, ctx);
 			},
 		);
 
 		this.registerMarkdownCodeBlockProcessor(
-			"shadowdark-item-list",
+			"sd-item-list",
 			(source, el, ctx) => {
 				renderItemListBlock(this, source, el, ctx);
 			},
 		);
 
 		this.registerMarkdownCodeBlockProcessor(
-			"shadowdark-monster",
+			"sd-monster",
 			(source, el, ctx) => {
 				renderMonsterBlock(this, source, el, ctx);
 			},
 		);
 
 		this.registerMarkdownCodeBlockProcessor(
-			"shadowdark-monster-instance",
+			"sd-monster-instance",
 			(source, el, ctx) => {
 				renderMonsterInstanceBlock(this, source, el, ctx);
 			},
@@ -251,7 +251,7 @@ export default class Shadowdark extends Plugin {
 								`| Id         | Name         | Description         | Items Per Slot | Stack Size | Free To Carry | Cost | Abundance |
 | ---------- | ------------ | ------------------- | -------------- | ---------- | ------------- | ---- | --------- |
 | ${newBase62Id("", 10)} | Example item | Example description | 1             | 1         | 0             | 1gp  | Common    |
-^shadowdark-item-set`,
+^sd-item-set`,
 							);
 
 							await this.app.workspace
@@ -436,7 +436,7 @@ export default class Shadowdark extends Plugin {
 		const tables: string[] = [];
 
 		for (let i = 0; i < lines.length; i++) {
-			if (lines[i]?.trim() !== "^shadowdark-item-set") continue;
+			if (lines[i]?.trim() !== "^sd-item-set") continue;
 
 			let end = i - 1;
 			while (end >= 0 && !lines[end]?.trim()) end--;
@@ -463,7 +463,7 @@ export default class Shadowdark extends Plugin {
 
 		const classBlocks = [
 			...content.matchAll(
-				/^(`{3,}|~{3,})shadowdark-class[^\S\r\n]*\r?\n([\s\S]*?)\r?\n\1[^\S\r\n]*$/gm,
+				/^(`{3,}|~{3,})sd-class[^\S\r\n]*\r?\n([\s\S]*?)\r?\n\1[^\S\r\n]*$/gm,
 			),
 		].map((match) => match[2]!.trim());
 
@@ -482,7 +482,7 @@ export default class Shadowdark extends Plugin {
 
 		const monsterBlocks = [
 			...content.matchAll(
-				/^(`{3,}|~{3,})shadowdark-monster[^\S\r\n]*\r?\n([\s\S]*?)\r?\n\1[^\S\r\n]*$/gm,
+				/^(`{3,}|~{3,})sd-monster[^\S\r\n]*\r?\n([\s\S]*?)\r?\n\1[^\S\r\n]*$/gm,
 			),
 		].map((match) => match[2]!.trim());
 

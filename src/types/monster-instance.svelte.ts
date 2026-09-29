@@ -108,7 +108,7 @@ export class MonsterInstance {
 
 	marshal() {
 		return [
-			"```shadowdark-monster-instance",
+			"```sd-monster-instance",
 			JSON.stringify(this.snapshot, null, 2),
 			"```",
 		].join("\n");
@@ -116,7 +116,7 @@ export class MonsterInstance {
 
 	static unmarshal(content: string): MonsterInstance {
 		const blockMatch = content.match(
-			/```shadowdark-monster-instance\s*([\s\S]*?)```/,
+			/```sd-monster-instance\s*([\s\S]*?)```/,
 		);
 		const json = blockMatch?.[1]?.trim() ?? content.trim();
 		try {
