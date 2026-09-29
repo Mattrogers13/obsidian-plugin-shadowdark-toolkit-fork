@@ -1,6 +1,18 @@
-import { Menu, Notice, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
+import {
+	Menu,
+	Notice,
+	normalizePath,
+	Plugin,
+	TAbstractFile,
+	TFile,
+	TFolder,
+} from "obsidian";
 import { Item } from "./types/item.svelte";
-import { DEFAULT_SETTINGS, type ShadowdarkSettings } from "./settings";
+import {
+	DEFAULT_SETTINGS,
+	SettingTab,
+	type ShadowdarkSettings,
+} from "./settings";
 import { renderNpcBlock } from "./blocks/npc";
 import { Npc } from "./types/npc.svelte";
 import { getRandomItem } from "./generators/random-item";
@@ -20,6 +32,8 @@ import { Level } from "./types/level";
 import { Alignment } from "./types/alignment";
 import { Range } from "./types/range";
 import { marshalEncounterTable } from "./types/encounter-table";
+import type { Encounter } from "./types/encounter";
+import { executeRoll } from "./types/modified-dice-roll";
 
 export default class Shadowdark extends Plugin {
 	settings!: ShadowdarkSettings;
@@ -93,8 +107,58 @@ export default class Shadowdark extends Plugin {
 		}
 	}
 
+	// Rolls each monster's quantity and writes one sd-monster-instance block per
+	// monster into a new note in the encounter folder, then opens it.
+	async runEncounter(
+		title: string,
+		monsters: NonNullable<Encounter["monsters"]>,
+	): Promise<void> {
+		const blocks = [`> ${title}`];
+		const missing: string[] = [];
+
+		for (const m of monsters) {
+			const monster = this.monsters[m.id];
+			if (!monster) {
+				missing.push(m.id);
+				continue;
+			}
+			const count = executeRoll(m.quantity);
+			for (let i = 0; i < count; i++) {
+				const instance = monster.instance;
+				instance.name += ` ${i + 1}`;
+				blocks.push(instance.marshal());
+			}
+		}
+
+		if (missing.length) {
+			new Notice(`Unknown monster id: ${missing.join(", ")}`);
+		}
+		if (blocks.length === 1) {
+			new Notice("Nothing to run: the encounter rolled no monsters.");
+			return;
+		}
+
+		const raw = this.settings.encounterFolder.trim();
+		const folder = raw ? normalizePath(raw) : "";
+		const prefix = folder ? `${folder}/` : "";
+		if (folder && !this.app.vault.getAbstractFileByPath(folder)) {
+			await this.app.vault.createFolder(folder);
+		}
+
+		let path = `${prefix}Encounter.md`;
+		for (let i = 2; this.app.vault.getAbstractFileByPath(path); i++) {
+			path = `${prefix}Encounter ${i}.md`;
+		}
+
+		const file = await this.app.vault.create(path, blocks.join("\n\n"));
+		await this.app.workspace
+			.getLeaf(true)
+			.openFile(file, { state: { mode: "preview" } });
+	}
+
 	async onload(): Promise<void> {
 		await this.loadSettings();
+		this.addSettingTab(new SettingTab(this.app, this));
 
 		await Promise.all(
 			this.app.vault.getMarkdownFiles().map((file) => this.updateCache(file)),

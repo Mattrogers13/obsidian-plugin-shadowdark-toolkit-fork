@@ -2,11 +2,11 @@ import { App, PluginSettingTab } from "obsidian";
 import Shadowdark from "./main";
 
 export interface ShadowdarkSettings {
-	mySetting: string;
+	encounterFolder: string;
 }
 
 export const DEFAULT_SETTINGS: ShadowdarkSettings = {
-	mySetting: "default",
+	encounterFolder: "",
 };
 
 export class SettingTab extends PluginSettingTab {
@@ -17,12 +17,12 @@ export class SettingTab extends PluginSettingTab {
 	getSettingDefinitions() {
 		return [
 			{
-				name: "Settings #1",
-				desc: "It's a secret",
+				name: "Encounter folder",
+				desc: "Where Run Encounter creates encounter notes. Leave empty for the vault root.",
 				control: {
-					type: "text" as const,
-					key: "mySetting",
-					placeholder: "Enter your secret",
+					type: "folder" as const,
+					key: "encounterFolder",
+					placeholder: "Encounters",
 				},
 			},
 		];
