@@ -1,10 +1,16 @@
 <script lang="ts">
 	import type Shadowdark from "../main";
 
-	let { scope, text }: { scope: Shadowdark; text: string } = $props();
+	let {
+		scope,
+		text,
+		bonuses = true,
+	}: { scope: Shadowdark; text: string; bonuses?: boolean } = $props();
 
-	// Matches dice formulas (2d8+2) and bare attack/check bonuses (+5, -1).
-	const DICE = /(\d*d\d+(?:\s?[+-]\s?\d+)?)|((?<![\w])[+-]\d+)/g;
+	// Matches dice formulas (2d8+2) and, when bonuses is on, bare attack/check
+	// bonuses (+5, -1) rolled as d20. Turn bonuses off for prose like "+1 damage".
+	const FORMULA = /(\d*d\d+(?:\s?[+-]\s?\d+)?)/g;
+	const WITH_BONUSES = /(\d*d\d+(?:\s?[+-]\s?\d+)?)|((?<![\w])[+-]\d+)/g;
 
 	interface Part {
 		text: string;
@@ -14,7 +20,7 @@
 	let parts = $derived.by(() => {
 		const out: Part[] = [];
 		let last = 0;
-		for (const m of text.matchAll(DICE)) {
+		for (const m of text.matchAll(bonuses ? WITH_BONUSES : FORMULA)) {
 			const i = m.index ?? 0;
 			if (i > last) out.push({ text: text.slice(last, i) });
 			out.push({

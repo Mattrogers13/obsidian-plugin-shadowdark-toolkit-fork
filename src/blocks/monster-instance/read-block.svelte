@@ -45,7 +45,7 @@
 			<span><b>Attributes:</b></span>
 			<ul class="actions">
 				{#each _monsterInstance.attributes as attribute}
-					<li><b>{attribute.name}.</b> <DiceText {scope} text={attribute.description} /></li>
+					<li><b>{attribute.name}.</b> <DiceText {scope} text={attribute.description} bonuses={false} /></li>
 				{/each}
 			</ul>
 		{/if}
