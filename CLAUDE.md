@@ -19,6 +19,7 @@ Shadowdark Toolkit: a personal fork of p-mercury/obsidian-shadow-dark (Apache-2.
 - `origin` = `Mattrogers13/obsidian-plugin-shadowdark-toolkit-fork`, `upstream` = `p-mercury/obsidian-shadow-dark`. Never open PRs upstream; `gh` default repo is set to the fork.
 - Flow: feature branch, then PR to the fork's `main`, then merge.
 - Releases: bump with `npm version X.Y.Z-alpha --no-git-tag-version` (updates `package.json`, `manifest.json`, `versions.json`), merge, then push a tag that is exactly the manifest version, **no `v` prefix**; Obsidian and BRAT require the tag, release name and manifest version to match. The tag push runs `.github/workflows/release.yaml`, which fails on a tag/manifest mismatch and publishes a release (pre-release when the version has a hyphen) with `main.js`, `manifest.json`, `styles.css`. Older `v0.x-alpha` tags predate this.
+- Pulling upstream: `git fetch upstream && git merge upstream/main` on a branch, then grep for `shadowdark-` and convert any new block/marker names to `sd-` before building (the `shadowdark-items` CSS class stays).
 - `gh pr merge` is pre-approved in `.claude/settings.local.json`, but only when run as its own command; don't chain it with other steps.
 - In zsh, quote `gh api` URLs that contain `?`. Never chain a branch switch after steps that can fail; a broken chain once left a commit on `main`.
 - `sources/` holds the original handoff notes and patches and is excluded via `.git/info/exclude`.
