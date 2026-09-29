@@ -57,27 +57,27 @@
 		</li>
 		<li>
 			<h3>STR</h3>
-			<DiceText {scope} text={"d20" + (_monster.stats.strength > -1 ? "+" : "") + _monster.stats.strength} />
+			<DiceText {scope} text={(_monster.stats.strength > -1 ? "+" : "") + _monster.stats.strength} />
 		</li>
 		<li>
 			<h3>INT</h3>
-			<DiceText {scope} text={"d20" + (_monster.stats.intelligence > -1 ? "+" : "") + _monster.stats.intelligence} />
+			<DiceText {scope} text={(_monster.stats.intelligence > -1 ? "+" : "") + _monster.stats.intelligence} />
 		</li>
 		<li>
 			<h3>DEX</h3>
-			<DiceText {scope} text={"d20" + (_monster.stats.dexterity > -1 ? "+" : "") + _monster.stats.dexterity} />
+			<DiceText {scope} text={(_monster.stats.dexterity > -1 ? "+" : "") + _monster.stats.dexterity} />
 		</li>
 		<li>
 			<h3>WIS</h3>
-			<DiceText {scope} text={"d20" + (_monster.stats.wisdom > -1 ? "+" : "") + _monster.stats.wisdom} />
+			<DiceText {scope} text={(_monster.stats.wisdom > -1 ? "+" : "") + _monster.stats.wisdom} />
 		</li>
 		<li>
 			<h3>CON</h3>
-			<DiceText {scope} text={"d20" + (_monster.stats.constitution > -1 ? "+" : "") + _monster.stats.constitution} />
+			<DiceText {scope} text={(_monster.stats.constitution > -1 ? "+" : "") + _monster.stats.constitution} />
 		</li>
 		<li>
 			<h3>CHA</h3>
-			<DiceText {scope} text={"d20" + (_monster.stats.charisma > -1 ? "+" : "") + _monster.stats.charisma} />
+			<DiceText {scope} text={(_monster.stats.charisma > -1 ? "+" : "") + _monster.stats.charisma} />
 		</li>
 	</ul>
 </article>
