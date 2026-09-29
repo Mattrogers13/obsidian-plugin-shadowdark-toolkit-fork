@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Monster } from "../../types/monster.svelte";
 	import type Shadowdark from "../../main";
+	import DiceText from "../../components/dice-text.svelte";
 	import { marshalModifiedDiceRoll } from "../../types/modified-dice-roll";
 
 	let {
@@ -30,14 +31,14 @@
 		<span><b>Attacks:</b></span>
 		<ul class="actions">
 			{#each _monster.actions as action}
-				<li>{action}</li>
+				<li><DiceText {scope} text={action} /></li>
 			{/each}
 		</ul>
 		{#if _monster.attributes.length}
 			<span><b>Attributes:</b></span>
 			<ul class="actions">
 				{#each _monster.attributes as attribute}
-					<li><b>{attribute.name}.</b> {attribute.description}</li>
+					<li><b>{attribute.name}.</b> <DiceText {scope} text={attribute.description} bonuses={false} /></li>
 				{/each}
 			</ul>
 		{/if}
@@ -45,9 +46,10 @@
 	<ul class="stats">
 		<li>
 			<h3>HP</h3>
-			{typeof _monster.hitPoints === "number"
-				? _monster.hitPoints
-				: marshalModifiedDiceRoll(_monster.hitPoints)}
+			<DiceText
+				{scope}
+				text={String(marshalModifiedDiceRoll(_monster.hitPoints))}
+			/>
 		</li>
 		<li>
 			<h3>AC</h3>
@@ -55,27 +57,27 @@
 		</li>
 		<li>
 			<h3>STR</h3>
-			{_monster.stats.strength > -1 ? "+" : ""}{_monster.stats.strength}
+			<DiceText {scope} text={(_monster.stats.strength > -1 ? "+" : "") + _monster.stats.strength} />
 		</li>
 		<li>
 			<h3>INT</h3>
-			{_monster.stats.intelligence > -1 ? "+" : ""}{_monster.stats.intelligence}
+			<DiceText {scope} text={(_monster.stats.intelligence > -1 ? "+" : "") + _monster.stats.intelligence} />
 		</li>
 		<li>
 			<h3>DEX</h3>
-			{_monster.stats.dexterity > -1 ? "+" : ""}{_monster.stats.dexterity}
+			<DiceText {scope} text={(_monster.stats.dexterity > -1 ? "+" : "") + _monster.stats.dexterity} />
 		</li>
 		<li>
 			<h3>WIS</h3>
-			{_monster.stats.wisdom > -1 ? "+" : ""}{_monster.stats.wisdom}
+			<DiceText {scope} text={(_monster.stats.wisdom > -1 ? "+" : "") + _monster.stats.wisdom} />
 		</li>
 		<li>
 			<h3>CON</h3>
-			{_monster.stats.constitution > -1 ? "+" : ""}{_monster.stats.constitution}
+			<DiceText {scope} text={(_monster.stats.constitution > -1 ? "+" : "") + _monster.stats.constitution} />
 		</li>
 		<li>
 			<h3>CHA</h3>
-			{_monster.stats.charisma > -1 ? "+" : ""}{_monster.stats.charisma}
+			<DiceText {scope} text={(_monster.stats.charisma > -1 ? "+" : "") + _monster.stats.charisma} />
 		</li>
 	</ul>
 </article>
