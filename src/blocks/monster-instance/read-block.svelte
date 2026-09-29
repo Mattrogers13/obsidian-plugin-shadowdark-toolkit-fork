@@ -1,6 +1,7 @@
 <script lang="ts">
 	import NumberInput from "../../components/number-input.svelte";
 	import type Shadowdark from "../../main";
+	import DiceText from "../../components/dice-text.svelte";
 	import { MonsterInstance } from "../../types/monster-instance.svelte";
 
 	let {
@@ -37,14 +38,14 @@
 		<span><b>Attacks:</b></span>
 		<ul class="actions">
 			{#each _monsterInstance.actions as action}
-				<li>{action}</li>
+				<li><DiceText {scope} text={action} /></li>
 			{/each}
 		</ul>
 		{#if _monsterInstance.attributes.length}
 			<span><b>Attributes:</b></span>
 			<ul class="actions">
 				{#each _monsterInstance.attributes as attribute}
-					<li><b>{attribute.name}.</b> {attribute.description}</li>
+					<li><b>{attribute.name}.</b> <DiceText {scope} text={attribute.description} /></li>
 				{/each}
 			</ul>
 		{/if}
@@ -60,33 +61,27 @@
 		</li>
 		<li>
 			<h3>STR</h3>
-			{_monsterInstance.stats.strength > -1 ? "+" : ""}{_monsterInstance.stats
-				.strength}
+			<DiceText {scope} text={"d20" + (_monsterInstance.stats.strength > -1 ? "+" : "") + _monsterInstance.stats.strength} />
 		</li>
 		<li>
 			<h3>INT</h3>
-			{_monsterInstance.stats.intelligence > -1 ? "+" : ""}{_monsterInstance
-				.stats.intelligence}
+			<DiceText {scope} text={"d20" + (_monsterInstance.stats.intelligence > -1 ? "+" : "") + _monsterInstance.stats.intelligence} />
 		</li>
 		<li>
 			<h3>DEX</h3>
-			{_monsterInstance.stats.dexterity > -1 ? "+" : ""}{_monsterInstance.stats
-				.dexterity}
+			<DiceText {scope} text={"d20" + (_monsterInstance.stats.dexterity > -1 ? "+" : "") + _monsterInstance.stats.dexterity} />
 		</li>
 		<li>
 			<h3>WIS</h3>
-			{_monsterInstance.stats.wisdom > -1 ? "+" : ""}{_monsterInstance.stats
-				.wisdom}
+			<DiceText {scope} text={"d20" + (_monsterInstance.stats.wisdom > -1 ? "+" : "") + _monsterInstance.stats.wisdom} />
 		</li>
 		<li>
 			<h3>CON</h3>
-			{_monsterInstance.stats.constitution > -1 ? "+" : ""}{_monsterInstance
-				.stats.constitution}
+			<DiceText {scope} text={"d20" + (_monsterInstance.stats.constitution > -1 ? "+" : "") + _monsterInstance.stats.constitution} />
 		</li>
 		<li>
 			<h3>CHA</h3>
-			{_monsterInstance.stats.charisma > -1 ? "+" : ""}{_monsterInstance.stats
-				.charisma}
+			<DiceText {scope} text={"d20" + (_monsterInstance.stats.charisma > -1 ? "+" : "") + _monsterInstance.stats.charisma} />
 		</li>
 	</ul>
 </article>

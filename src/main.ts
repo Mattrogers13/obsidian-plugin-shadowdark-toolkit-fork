@@ -1,4 +1,4 @@
-import { Menu, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
+import { Menu, Notice, Plugin, TAbstractFile, TFile, TFolder } from "obsidian";
 import { Item } from "./types/item.svelte";
 import { DEFAULT_SETTINGS, type ShadowdarkSettings } from "./settings";
 import { renderNpcBlock } from "./blocks/npc";
@@ -49,6 +49,19 @@ export default class Shadowdark extends Plugin {
 				.flatMap(({ items }) => items)
 				.map((monster) => [monster.id, monster]),
 		);
+	}
+
+	rollDice(formula: string) {
+		const f = formula.trim();
+		if (!f) return;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const plugins = (this.app as any).plugins?.plugins;
+		if (!plugins?.["obsidian-dice-roller"]) {
+			new Notice("Dice Roller plugin is not enabled.");
+			return;
+		}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(this.app.workspace as any).trigger("dice-roller:render-dice", f);
 	}
 
 	async onload(): Promise<void> {
