@@ -150,7 +150,7 @@ export class Npc {
 		const snapshot = this.snapshot;
 
 		return [
-			"```shadowdark-npc",
+			"```sd-npc",
 			JSON.stringify(
 				{
 					...snapshot,
@@ -165,7 +165,7 @@ export class Npc {
 	}
 
 	static unmarshal(content: string, classes: Record<string, Class>): Npc {
-		const blockMatch = content.match(/```shadowdark-npc\s*([\s\S]*?)```/);
+		const blockMatch = content.match(/```sd-npc\s*([\s\S]*?)```/);
 		const json = blockMatch?.[1]?.trim() ?? content.trim();
 		try {
 			const value = JSON5.parse(json);

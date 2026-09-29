@@ -54,14 +54,14 @@ export class Item {
 
 	marshal() {
 		return [
-			"```shadowdark-item",
+			"```sd-item",
 			JSON.stringify(this.snapshot, null, 2),
 			"```",
 		].join("\n");
 	}
 
 	static unmarshal(content: string) {
-		const blockMatch = content.match(/```shadowdark-item\s*([\s\S]*?)```/);
+		const blockMatch = content.match(/```sd-item\s*([\s\S]*?)```/);
 		const json = blockMatch?.[1]?.trim() ?? content.trim();
 		try {
 			return new Item(JSON5.parse(json) as ItemData);

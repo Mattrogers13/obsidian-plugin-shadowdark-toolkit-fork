@@ -35,7 +35,7 @@ export function marshalEncounterTable(encounterTable: EncounterTable): string {
 	};
 
 	return [
-		"```shadowdark-encounter-table",
+		"```sd-encounter-table",
 		JSON.stringify(serialized, null, 2),
 		"```",
 	].join("\n");
@@ -43,7 +43,7 @@ export function marshalEncounterTable(encounterTable: EncounterTable): string {
 
 export function unmarshalEncounterTable(content: string) {
 	const blockMatch = content.match(
-		/```shadowdark-encounter-table\s*([\s\S]*?)```/,
+		/```sd-encounter-table\s*([\s\S]*?)```/,
 	);
 	try {
 		const data = JSON5.parse(blockMatch?.[1]?.trim() ?? content.trim());

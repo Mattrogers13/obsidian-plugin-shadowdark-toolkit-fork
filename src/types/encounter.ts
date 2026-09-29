@@ -24,7 +24,7 @@ export function marshalEncounter(encounter: Encounter): string {
 	};
 
 	return [
-		"```shadowdark-encounter",
+		"```sd-encounter",
 		JSON.stringify(serialized, null, 2),
 		"```",
 	].join("\n");
@@ -33,7 +33,7 @@ export function marshalEncounter(encounter: Encounter): string {
 export function unmarshalEncounter(content: string) {
 	let data: any;
 	try {
-		const blockMatch = content.match(/```shadowdark-encounter\s*([\s\S]*?)```/);
+		const blockMatch = content.match(/```sd-encounter\s*([\s\S]*?)```/);
 		data = JSON5.parse(blockMatch?.[1]?.trim() ?? content.trim());
 	} catch {
 		throw new Error("Invalid JSON");

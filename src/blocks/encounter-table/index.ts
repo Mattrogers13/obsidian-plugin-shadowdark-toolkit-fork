@@ -65,7 +65,7 @@ class EncoutnerTableBlockChild extends MarkdownRenderChild {
 
 							if (
 								line !== undefined &&
-								/^\s*```shadowdark-encounter-table\s*$/.test(line)
+								/^\s*```sd-encounter-table\s*$/.test(line)
 							) {
 								blockStart = index;
 								break;
