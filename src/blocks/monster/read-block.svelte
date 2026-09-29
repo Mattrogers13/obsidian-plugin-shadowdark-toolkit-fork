@@ -3,6 +3,7 @@
 	import type Shadowdark from "../../main";
 	import DiceText from "../../components/dice-text.svelte";
 	import { marshalModifiedDiceRoll } from "../../types/modified-dice-roll";
+	import { QuantityModal } from "../../modals/quantity-modal";
 
 	let {
 		scope,
@@ -22,9 +23,21 @@
 </script>
 
 <article>
-	<h2>
-		{_monster.name}
-	</h2>
+	<header>
+		<h2>
+			{_monster.name}
+		</h2>
+		<button
+			class="run"
+			title="Run an encounter with this monster"
+			onclick={() =>
+				new QuantityModal(scope.app, _monster.name, (quantity) =>
+					scope.runEncounter(_monster.name, [
+						{ id: _monster.id, quantity },
+					]),
+				).open()}>Run</button
+		>
+	</header>
 	<div class="details">
 		<span>{_monster.description}</span>
 		<span><b>Level:</b> {_monster.level}</span>
@@ -101,8 +114,21 @@
 			/ 1fr auto;
 	}
 
-	h2 {
+	header {
 		grid-area: name;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.4rem;
+	}
+
+	.run {
+		font-size: 0.8rem;
+		padding: 0.2rem 0.6rem;
+		height: auto;
+	}
+
+	h2 {
 		border-radius: 0.4rem;
 		font-weight: 600;
 		font-size: 1.2rem;

@@ -1,10 +1,7 @@
 <script lang="ts">
 	import type Shadowdark from "../main";
 	import type { EncounterTable } from "../types/encounter-table";
-	import {
-		executeRoll,
-		marshalModifiedDiceRoll,
-	} from "../types/modified-dice-roll";
+	import { marshalModifiedDiceRoll } from "../types/modified-dice-roll";
 	import Dialog from "./dialog.svelte";
 
 	let { scope }: { scope: Shadowdark } = $props();
@@ -31,37 +28,10 @@
 				{#if encounter.monsters}
 					<button
 						onclick={async () => {
-							const file = [
-								`> ${encounter!.description || encounter?.title}\n`,
-							];
-
-							encounter!.monsters?.forEach((m) => {
-								const monster = scope.monsters[m.id];
-								if (monster) {
-									const x = executeRoll(m.quantity);
-									for (let i = 0; i < x; i++) {
-										const snapshot = monster.instance;
-										snapshot.name += ` ${i + 1}`;
-										file.push(snapshot.marshal());
-									}
-								}
-							});
-
-							let path = `Encounter.md`;
-							let i = 2;
-							while (scope.app.vault.getAbstractFileByPath(path)) {
-								path = `Encounter ${i++}.md`;
-							}
-
-							const shopFile = await scope.app.vault.create(
-								path,
-								file.join("\n"),
+							await scope.runEncounter(
+								encounter!.description || encounter!.title,
+								encounter!.monsters ?? [],
 							);
-
-							await scope.app.workspace
-								.getLeaf(true)
-								.openFile(shopFile, { state: { mode: "preview" } });
-
 							dialog?.close();
 						}}
 					>
