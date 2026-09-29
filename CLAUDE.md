@@ -10,6 +10,8 @@ Shadowdark Toolkit: a personal fork of p-mercury/obsidian-shadow-dark (Apache-2.
 - `npx svelte-check --threshold error`: run this too after touching Svelte. The 2 existing warnings are upstream's.
 - `npm run dev`: esbuild watch mode with inline sourcemaps.
 - No test suite. `npm run lint` fails because upstream ships no `eslint.config.*`. Formatting is Prettier with tabs.
+- Testing pure TS logic without a suite: `npx esbuild src/<file>.ts --bundle --format=cjs --platform=node --external:obsidian --outfile=<scratch>/x.cjs`, stub `obsidian` in `<scratch>/node_modules/obsidian/index.js`, then `node -e` against the exports.
+- UI and Dice Roller behavior can't be verified from the CLI: rebuild, copy into the vault, and have the user toggle the plugin off/on and check (screenshots help for layout).
 - Install into a vault: copy `main.js`, `manifest.json`, `styles.css` to `<vault>/.obsidian/plugins/shadowdark-toolkit/`. The test vault is `~/Obsidian/shadowdark-ravenloft`. Its `.obsidian/` is gitignored, so plugin files never enter the vault repo.
 
 ## Repo workflow
@@ -17,6 +19,8 @@ Shadowdark Toolkit: a personal fork of p-mercury/obsidian-shadow-dark (Apache-2.
 - `origin` = `Mattrogers13/obsidian-plugin-shadowdark-toolkit-fork`, `upstream` = `p-mercury/obsidian-shadow-dark`. Never open PRs upstream; `gh` default repo is set to the fork.
 - Flow: feature branch, then PR to the fork's `main`, then merge.
 - Releases: bump with `npm version X.Y.Z-alpha --no-git-tag-version` (updates `package.json`, `manifest.json`, `versions.json`), merge, then push a tag that is exactly the manifest version, **no `v` prefix**; Obsidian and BRAT require the tag, release name and manifest version to match. The tag push runs `.github/workflows/release.yaml`, which fails on a tag/manifest mismatch and publishes a release (pre-release when the version has a hyphen) with `main.js`, `manifest.json`, `styles.css`. Older `v0.x-alpha` tags predate this.
+- `gh pr merge` is pre-approved in `.claude/settings.local.json`, but only when run as its own command; don't chain it with other steps.
+- In zsh, quote `gh api` URLs that contain `?`. Never chain a branch switch after steps that can fail; a broken chain once left a commit on `main`.
 - `sources/` holds the original handoff notes and patches and is excluded via `.git/info/exclude`.
 
 ## Architecture
@@ -39,3 +43,4 @@ Shadowdark Toolkit: a personal fork of p-mercury/obsidian-shadow-dark (Apache-2.
 
 - Block names are `sd-*` (renamed from upstream's `shadowdark-*` to avoid clashing with upstream and the Shadowdark Statblocks plugin). Renaming a block or marker also requires migrating existing vault notes.
 - The user prefers the existing card layout with stat boxes. A black-and-white book-style restyle was tried and rejected.
+- Test notes in the Ravenloft vault (`04 Reference/Tools Test/`) are untracked by the vault's git; copy them to the scratchpad before bulk edits, and never commit to the vault repo (the user has their own uncommitted work there).
