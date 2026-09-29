@@ -7,37 +7,60 @@
 		bonuses = true,
 	}: { scope: Shadowdark; text: string; bonuses?: boolean } = $props();
 
-	// Matches dice formulas (2d8+2) and, when bonuses is on, bare attack/check
-	// bonuses (+5, -1) rolled as d20. Turn bonuses off for prose like "+1 damage".
-	const FORMULA = /(\d*d\d+(?:\s?[+-]\s?\d+)?)/g;
-	const WITH_BONUSES = /(\d*d\d+(?:\s?[+-]\s?\d+)?)|((?<![\w])[+-]\d+)/g;
+	// Matches, in order: DC checks (DC 15 CON), dice formulas (2d8+2) and, when
+	// bonuses is on, bare attack/check bonuses (+5, -1) rolled as d20. Turn
+	// bonuses off for prose like "+1 damage".
+	const CHECK = /\bDC\s?(\d+)(?:\s+(STR|DEX|CON|INT|WIS|CHA)\b)?/;
+	const FORMULA = /(\d*d\d+(?:\s?[+-]\s?\d+)?)/;
+	const BONUS = /((?<![\w])[+-]\d+)/;
+	const pattern = $derived(
+		new RegExp(
+			[CHECK, FORMULA, ...(bonuses ? [BONUS] : [])]
+				.map((r) => r.source)
+				.join("|"),
+			"g",
+		),
+	);
 
 	interface Part {
 		text: string;
-		formula?: string;
+		roll?: () => void;
+		title?: string;
 	}
 
 	let parts = $derived.by(() => {
 		const out: Part[] = [];
 		let last = 0;
-		for (const m of text.matchAll(bonuses ? WITH_BONUSES : FORMULA)) {
+		for (const m of text.matchAll(pattern)) {
 			const i = m.index ?? 0;
 			if (i > last) out.push({ text: text.slice(last, i) });
-			out.push({
-				text: m[0],
-				formula: m[1] ? m[1].replace(/\s/g, "") : "d20" + m[2],
-			});
-			last = i + m[0].length;
+			const [match, dc, , formula, bonus] = m;
+			if (dc) {
+				const label = match.replace(/\s+/g, " ");
+				out.push({
+					text: match,
+					title: `Roll d20 vs ${label}`,
+					roll: () => scope.rollCheck(Number(dc), label),
+				});
+			} else {
+				const f = formula ? formula.replace(/\s/g, "") : "d20" + bonus;
+				out.push({
+					text: match,
+					title: "Roll " + f,
+					roll: () => scope.rollDice(f),
+				});
+			}
+			last = i + match.length;
 		}
 		if (last < text.length) out.push({ text: text.slice(last) });
 		return out;
 	});
 </script>
 
-{#each parts as part}{#if part.formula}<button
+{#each parts as part}{#if part.roll}<button
 			class="sd-dice"
-			title={"Roll " + part.formula}
-			onclick={() => scope.rollDice(part.formula ?? "")}>{part.text}</button
+			title={part.title}
+			onclick={part.roll}>{part.text}</button
 		>{:else}{part.text}{/if}{/each}
 
 <style>

@@ -64,6 +64,35 @@ export default class Shadowdark extends Plugin {
 		(this.app.workspace as any).trigger("dice-roller:render-dice", f);
 	}
 
+	// Rolls a raw d20 through Dice Roller and reports pass/fail against the DC.
+	// Dice Roller answers with "dice-roller:rendered-result"; the listener is
+	// dropped after the first result or after a timeout if the roll never lands.
+	rollCheck(dc: number, label: string) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const workspace = this.app.workspace as any;
+		const ref = workspace.on(
+			"dice-roller:rendered-result",
+			(result: unknown) => {
+				cleanup();
+				if (typeof result !== "number") return;
+				new Notice(
+					`${label}: ${result}, ${result >= dc ? "pass" : "fail"}`,
+				);
+			},
+		);
+		const timer = window.setTimeout(() => cleanup(), 10000);
+		const cleanup = () => {
+			window.clearTimeout(timer);
+			workspace.offref(ref);
+		};
+		this.rollDice("1d20");
+		// rollDice bails without triggering when Dice Roller is off.
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		if (!(this.app as any).plugins?.plugins?.["obsidian-dice-roller"]) {
+			cleanup();
+		}
+	}
+
 	async onload(): Promise<void> {
 		await this.loadSettings();
 
