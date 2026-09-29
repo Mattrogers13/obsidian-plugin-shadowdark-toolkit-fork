@@ -13,17 +13,27 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Use Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18.x"
+          node-version: "22.x"
 
       - name: Build plugin
         run: |
-          npm install
+          npm ci
           npm run build
+
+      # Obsidian and BRAT need the tag, release name and manifest version to match.
+      - name: Check tag matches manifest version
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          version="$(node -p "require('./manifest.json').version")"
+          if [ "$tag" != "$version" ]; then
+            echo "Tag $tag does not match manifest.json version $version"
+            exit 1
+          fi
 
       - name: Generate artifact attestation
         uses: actions/attest@v4
@@ -33,13 +43,17 @@ jobs:
             manifest.json
             styles.css
 
+      # Published (not draft) so BRAT can see it; versions with a hyphen
+      # (0.4.0-alpha) are marked as pre-releases.
       - name: Create release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF#refs/tags/}"
+          prerelease=""
+          case "$tag" in *-*) prerelease="--prerelease" ;; esac
 
           gh release create "$tag" \
             --title="$tag" \
-            --draft \
+            $prerelease \
             main.js manifest.json styles.css
