@@ -32,7 +32,8 @@ import { Level } from "./types/level";
 import { Alignment } from "./types/alignment";
 import { Range } from "./types/range";
 import { marshalEncounterTable } from "./types/encounter-table";
-import type { Encounter } from "./types/encounter";
+import { marshalEncounter, type Encounter } from "./types/encounter";
+import { renderEncounterBlock } from "./blocks/encounter";
 import { executeRoll } from "./types/modified-dice-roll";
 
 export default class Shadowdark extends Plugin {
@@ -221,6 +222,13 @@ export default class Shadowdark extends Plugin {
 		);
 
 		this.registerMarkdownCodeBlockProcessor(
+			"sd-encounter",
+			(source, el, ctx) => {
+				renderEncounterBlock(this, source, el, ctx);
+			},
+		);
+
+		this.registerMarkdownCodeBlockProcessor(
 			"sd-npc",
 			(source, el, ctx) => {
 				renderNpcBlock(this, source, el, ctx);
@@ -263,6 +271,28 @@ export default class Shadowdark extends Plugin {
 					const submenu = (
 						item as unknown as { setSubmenu(): Menu }
 					).setSubmenu();
+
+					submenu.addItem((item) => {
+						item
+							.setTitle("Insert Encounter")
+							.setIcon("swords")
+							.setSection("insert")
+							.onClick(() => {
+								const ids = Object.keys(this.monsters).slice(0, 2);
+								editor.replaceSelection(
+									marshalEncounter({
+										title: "New encounter",
+										description: "What the party sees",
+										monsters: (ids.length ? ids : ["monster-id"]).map(
+											(id) => ({
+												id,
+												quantity: { count: 1, sides: 4, modifier: 0 },
+											}),
+										),
+									}),
+								);
+							});
+					});
 
 					submenu.addItem((item) => {
 						item
